@@ -103,7 +103,7 @@ class gameManager(object):
                         #print("pass")
                         pass
                     else:
-                        return [], -500
+                        return [], -1000
                 continue
             
 
@@ -147,7 +147,16 @@ class gameManager(object):
                     elif thisTile.value == 2048:
                         thisTile.image = pygame.image.load("images/{}".format(files[11]))                    
                         thisTile.render()
-       
+    def keepToCorner(self):
+        reward = 0
+        orderedvalues = np.partition(np.ravel(self.gridValues()[0]).flatten(), -2)
+        if orderedvalues[-1] == self.gridValues()[0][0][0]:
+            reward = 300
+            if orderedvalues[-2] == self.gridValues()[0][0][1]:
+                reward = 400
+                if orderedvalues[-3] == self.gridValues()[0][0][2]:
+                    reward = 500
+        return reward
     def moveTiles(self,vector,seed):#good luck mate
         ##########MOVEMENT###################
         reward = 0
@@ -229,16 +238,10 @@ class gameManager(object):
         for t in np.ravel(self.gridValues()[0]):# check how many empty tiles
             if t > 0:
                 nt += 1
-        n_tiles_coef = (1 - nt/16) * 200
+        n_tiles_coef = (1 - nt/16) * 800
 
-        rewardforbeingincorner = 0 #try to keep highest values in corner
-        orderedvalues = np.partition(np.ravel(self.gridValues()[0]).flatten(), -2)
-        if orderedvalues[-1] == self.gridValues()[0][0][0]:
-            rewardforbeingincorner += orderedvalues[-1]
-            if orderedvalues[-2] == self.gridValues()[0][0][1]:
-                rewardforbeingincorner += orderedvalues[-2]
-                if orderedvalues[-3] == self.gridValues()[0][0][2]:
-                    rewardforbeingincorner += orderedvalues[-3]
+        rewardforbeingincorner = self.keepToCorner() #try to keep highest values in corner
+        
         
         return reward+n_tiles_coef+rewardDeduction+rewardforbeingincorner, new_seed, running
         

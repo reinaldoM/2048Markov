@@ -73,7 +73,7 @@ def get_best_action(state):
     if np.sum(Rewards) <= 0.0:
         sys.exit()
     best_action = np.unravel_index(Rewards.argmax(), Rewards.shape)
-    print("best seed was {}.".format(seeds[best_action[0]]))
+    print("0: up, 1: down, 2: left, 3: right")
     print("best action was {}.".format(best_action[0]))
     return best_action[0], seeds[best_action[0]]
 
@@ -88,7 +88,7 @@ def run(time_steps):
         reward, seed, running = step(action, seed)
         #time.sleep(10)
         toc = time.perf_counter()
-        print(f"took {toc - tic:0.4f} seconds to run 1 timestep")
+        print(f"took {toc - tic:0.4f} seconds to run best action")
         
 if __name__ == "__main__":
     run(2000)
